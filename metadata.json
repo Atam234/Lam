@@ -1,0 +1,6 @@
+{
+  "name": "Argus",
+  "description": "Encrypted session keystroke logger, Latin-Cyrillic layout mapper, RSA-4096 PEM key generator, and OAEP SHA3-512 log decryptor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

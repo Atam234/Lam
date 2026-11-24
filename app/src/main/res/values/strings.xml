@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Argus</string>
+    <string name="nav_logger">Logger</string>
+    <string name="nav_vault">Vault</string>
+    <string name="nav_decryptor">Decryptor</string>
+    <string name="nav_keys">Keys</string>
+    <string name="notice_authorized_use">Authorized security testing and educational session telemetry tool.</string>
+</resources>
