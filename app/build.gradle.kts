@@ -4,7 +4,14 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.google.services)
+    alias(libs.plugins.google.services) apply false
+}
+
+// Firebase config: only applied when app/google-services.json exists
+// (CI writes it from the GOOGLE_SERVICES_JSON secret). Without it the app
+// still builds; only the built-in Gemini (Firebase) provider won't work.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
 }
 
 android {
