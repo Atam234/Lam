@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Argus"
+rootProject.name = "OmniMode"
 include(":app")

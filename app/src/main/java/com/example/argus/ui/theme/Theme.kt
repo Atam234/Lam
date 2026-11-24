@@ -8,51 +8,51 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 
-private val ArgusDarkColorScheme = darkColorScheme(
-    primary = EmeraldPrimary,
-    onPrimary = EmeraldOnPrimary,
-    primaryContainer = EmeraldContainer,
-    onPrimaryContainer = EmeraldOnContainer,
+private val OmniDarkColorScheme = darkColorScheme(
+    primary = VioletPrimary,
+    onPrimary = VioletOnPrimary,
+    primaryContainer = VioletContainer,
+    onPrimaryContainer = VioletOnContainer,
     secondary = CyanSecondary,
     onSecondary = CyanOnSecondary,
     secondaryContainer = CyanContainer,
     onSecondaryContainer = CyanOnContainer,
-    tertiary = AmberTertiary,
-    onTertiary = AmberOnTertiary,
-    tertiaryContainer = AmberContainer,
-    onTertiaryContainer = AmberOnContainer,
+    tertiary = EmeraldTertiary,
+    onTertiary = EmeraldOnTertiary,
+    tertiaryContainer = EmeraldContainer,
+    onTertiaryContainer = EmeraldOnContainer,
     error = CoralError,
     onError = CoralOnError,
     errorContainer = CoralContainer,
     onErrorContainer = CoralOnContainer,
-    background = ObsidianBg,
+    background = NebulaBg,
     onBackground = TextPrimaryDark,
-    surface = ObsidianSurface,
+    surface = NebulaSurface,
     onSurface = TextPrimaryDark,
-    surfaceVariant = ObsidianSurfaceVariant,
+    surfaceVariant = NebulaSurfaceVariant,
     onSurfaceVariant = TextSecondaryDark,
-    surfaceContainerHigh = ObsidianSurfaceHighest,
+    surfaceContainerHigh = NebulaSurfaceHighest,
     outline = OutlineDark,
     outlineVariant = OutlineVariantDark
 )
 
-private val ArgusLightColorScheme = lightColorScheme(
+private val OmniLightColorScheme = lightColorScheme(
     primary = LightPrimary,
     onPrimary = LightSurface,
-    primaryContainer = EmeraldOnContainer,
-    onPrimaryContainer = EmeraldOnPrimary,
+    primaryContainer = VioletOnContainer,
+    onPrimaryContainer = LightPrimary,
     secondary = LightSecondary,
     onSecondary = LightSurface,
     secondaryContainer = CyanOnContainer,
-    onSecondaryContainer = CyanOnSecondary,
+    onSecondaryContainer = LightSecondary,
     tertiary = LightTertiary,
     onTertiary = LightSurface,
-    tertiaryContainer = AmberOnContainer,
-    onTertiaryContainer = AmberOnTertiary,
+    tertiaryContainer = EmeraldOnContainer,
+    onTertiaryContainer = LightTertiary,
     error = CoralError,
     onError = LightSurface,
     errorContainer = CoralOnContainer,
-    onErrorContainer = CoralOnError,
+    onErrorContainer = CoralError,
     background = LightBg,
     onBackground = LightTextPrimary,
     surface = LightSurface,
@@ -62,23 +62,23 @@ private val ArgusLightColorScheme = lightColorScheme(
     outline = LightOutline
 )
 
-val ArgusShapes = Shapes(
+val OmniShapes = Shapes(
     small = RoundedCornerShape(10.dp),
     medium = RoundedCornerShape(16.dp),
     large = RoundedCornerShape(22.dp)
 )
 
 @Composable
-fun ArgusTheme(
+fun OmniModeTheme(
     darkTheme: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) ArgusDarkColorScheme else ArgusLightColorScheme
+    val colorScheme = if (darkTheme) OmniDarkColorScheme else OmniLightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = ArgusTypography,
-        shapes = ArgusShapes,
+        shapes = OmniShapes,
         content = content
     )
 }

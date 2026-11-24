@@ -1,2 +1,2 @@
--keep class org.bouncycastle.** { *; }
--dontwarn org.bouncycastle.**
+-keepattributes Signature,InnerClasses,EnclosingMethod
+-keep class kotlinx.serialization.** { *; }

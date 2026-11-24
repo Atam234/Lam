@@ -10,21 +10,23 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Key
-import androidx.compose.material.icons.filled.LockOpen
-import androidx.compose.material.icons.filled.Terminal
-import androidx.compose.material.icons.outlined.Folder
-import androidx.compose.material.icons.outlined.Key
-import androidx.compose.material.icons.outlined.LockOpen
-import androidx.compose.material.icons.outlined.Terminal
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -50,28 +52,33 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.argus.ui.ArgusTab
-import com.example.argus.ui.ArgusViewModel
-import com.example.argus.ui.screens.LogDecryptorScreen
-import com.example.argus.ui.screens.LogVaultScreen
-import com.example.argus.ui.screens.RsaKeysScreen
-import com.example.argus.ui.screens.SessionLoggerScreen
-import com.example.argus.ui.theme.ArgusTheme
+import com.example.argus.ai.configureAppCheck
+import com.example.argus.ui.OmniModeViewModel
+import com.example.argus.ui.OmniTab
+import com.example.argus.ui.screens.HistoryScreen
+import com.example.argus.ui.screens.ModesScreen
+import com.example.argus.ui.screens.ProvidersScreen
+import com.example.argus.ui.screens.RunnerScreen
+import com.example.argus.ui.theme.OmniModeTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Configure Firebase App Check before any UI, ViewModels, or Firebase operations
+        configureAppCheck(this, intent)
+
         enableEdgeToEdge()
         setContent {
-            ArgusTheme(darkTheme = true) {
-                ArgusRootApp()
+            OmniModeTheme(darkTheme = true) {
+                OmniModeApp()
             }
         }
     }
 }
 
-private data class NavItemSpec(
-    val tab: ArgusTab,
+private data class OmniNavSpec(
+    val tab: OmniTab,
     val labelRes: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
@@ -80,62 +87,55 @@ private data class NavItemSpec(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ArgusRootApp(
-    viewModel: ArgusViewModel = viewModel()
+fun OmniModeApp(
+    viewModel: OmniModeViewModel = viewModel()
 ) {
-    val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
-    val sessionState by viewModel.sessionState.collectAsStateWithLifecycle()
-    val sandboxText by viewModel.sandboxText.collectAsStateWithLifecycle()
-    val vaultState by viewModel.vaultState.collectAsStateWithLifecycle()
-    val decryptorState by viewModel.decryptorState.collectAsStateWithLifecycle()
-    val keysState by viewModel.keysState.collectAsStateWithLifecycle()
-    val snackbarMessage by viewModel.snackbarMessage.collectAsStateWithLifecycle()
-
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(snackbarMessage) {
-        val msg = snackbarMessage
+    LaunchedEffect(state.snackbarMessage) {
+        val msg = state.snackbarMessage
         if (msg != null) {
             snackbarHostState.showSnackbar(msg)
             viewModel.consumeSnackbar()
         }
     }
 
-    if (selectedTab != ArgusTab.LOGGER) {
+    if (state.selectedTab != OmniTab.MODES) {
         BackHandler {
-            viewModel.selectTab(ArgusTab.LOGGER)
+            viewModel.selectTab(OmniTab.MODES)
         }
     }
 
     val navItems = remember {
         listOf(
-            NavItemSpec(
-                tab = ArgusTab.LOGGER,
-                labelRes = R.string.nav_logger,
-                selectedIcon = Icons.Filled.Terminal,
-                unselectedIcon = Icons.Outlined.Terminal,
-                testTag = "nav_tab_logger"
+            OmniNavSpec(
+                tab = OmniTab.MODES,
+                labelRes = R.string.nav_modes,
+                selectedIcon = Icons.Filled.AutoAwesome,
+                unselectedIcon = Icons.Outlined.AutoAwesome,
+                testTag = "nav_tab_modes"
             ),
-            NavItemSpec(
-                tab = ArgusTab.VAULT,
-                labelRes = R.string.nav_vault,
-                selectedIcon = Icons.Filled.Folder,
-                unselectedIcon = Icons.Outlined.Folder,
-                testTag = "nav_tab_vault"
+            OmniNavSpec(
+                tab = OmniTab.RUN,
+                labelRes = R.string.nav_run,
+                selectedIcon = Icons.Filled.PlayArrow,
+                unselectedIcon = Icons.Outlined.PlayArrow,
+                testTag = "nav_tab_run"
             ),
-            NavItemSpec(
-                tab = ArgusTab.DECRYPTOR,
-                labelRes = R.string.nav_decryptor,
-                selectedIcon = Icons.Filled.LockOpen,
-                unselectedIcon = Icons.Outlined.LockOpen,
-                testTag = "nav_tab_decryptor"
+            OmniNavSpec(
+                tab = OmniTab.MODELS,
+                labelRes = R.string.nav_models,
+                selectedIcon = Icons.Filled.Tune,
+                unselectedIcon = Icons.Outlined.Tune,
+                testTag = "nav_tab_models"
             ),
-            NavItemSpec(
-                tab = ArgusTab.KEYS,
-                labelRes = R.string.nav_keys,
-                selectedIcon = Icons.Filled.Key,
-                unselectedIcon = Icons.Outlined.Key,
-                testTag = "nav_tab_keys"
+            OmniNavSpec(
+                tab = OmniTab.HISTORY,
+                labelRes = R.string.nav_history,
+                selectedIcon = Icons.Filled.History,
+                unselectedIcon = Icons.Outlined.History,
+                testTag = "nav_tab_history"
             )
         )
     }
@@ -162,11 +162,9 @@ fun ArgusRootApp(
             },
             bottomBar = {
                 if (!useRail) {
-                    NavigationBar(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    ) {
+                    NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
                         navItems.forEach { item ->
-                            val isSelected = selectedTab == item.tab
+                            val isSelected = state.selectedTab == item.tab
                             val label = stringResource(item.labelRes)
                             NavigationBarItem(
                                 selected = isSelected,
@@ -189,6 +187,8 @@ fun ArgusRootApp(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
+                    .imePadding()
             ) {
                 if (useRail) {
                     NavigationRail(
@@ -199,7 +199,7 @@ fun ArgusRootApp(
                     ) {
                         Spacer(Modifier.weight(0.1f))
                         navItems.forEach { item ->
-                            val isSelected = selectedTab == item.tab
+                            val isSelected = state.selectedTab == item.tab
                             val label = stringResource(item.labelRes)
                             NavigationRailItem(
                                 selected = isSelected,
@@ -224,51 +224,48 @@ fun ArgusRootApp(
                         .weight(1f),
                     contentAlignment = Alignment.TopCenter
                 ) {
-                    Box(modifier = Modifier.widthIn(max = 760.dp)) {
-                        when (selectedTab) {
-                            ArgusTab.LOGGER -> SessionLoggerScreen(
-                                state = sessionState,
-                                sandboxText = sandboxText,
-                                onModeChange = viewModel::setLoggerMode,
-                                onEncryptionChange = viewModel::setEncryptionEnabled,
-                                onWindowNameChange = viewModel::setActiveWindowName,
-                                onInitialLanguageChange = viewModel::setInitialLanguage,
-                                onTargetLanguageChange = viewModel::setTargetLanguage,
-                                onClipboardMonitoringChange = viewModel::setClipboardMonitoring,
-                                onToggleShift = viewModel::toggleShift,
-                                onToggleCapsLock = viewModel::toggleCapsLock,
-                                onToggleCtrl = viewModel::toggleCtrl,
-                                onSandboxTextChange = viewModel::onSandboxTextChanged,
-                                onSpecialKey = viewModel::onSpecialKeyPressed,
-                                onFlushBuffer = viewModel::flushBuffer,
-                                onClearFeed = viewModel::clearSessionFeed
+                    Box(modifier = Modifier.widthIn(max = 780.dp)) {
+                        when (state.selectedTab) {
+                            OmniTab.MODES -> ModesScreen(
+                                modes = state.modes,
+                                activeModeId = state.activeModeId,
+                                activeProvider = state.activeProvider,
+                                onSelectMode = viewModel::selectModeAndLaunch,
+                                onCreateCustomMode = viewModel::createCustomMode,
+                                onDeleteCustomMode = viewModel::deleteCustomMode,
+                                onOpenModelsTab = { viewModel.selectTab(OmniTab.MODELS) }
                             )
-                            ArgusTab.VAULT -> LogVaultScreen(
-                                state = vaultState,
-                                onRefresh = viewModel::refreshVaultLogs,
-                                onInspectLog = viewModel::inspectVaultLog,
-                                onDismissPreview = viewModel::dismissVaultPreview,
-                                onSendToDecryptor = viewModel::sendVaultLogToDecryptor,
-                                onDeleteLog = viewModel::deleteVaultLog,
-                                onUploadEndpointChange = viewModel::setUploadEndpointUrl,
-                                onUploadLog = viewModel::uploadVaultLog
+                            OmniTab.RUN -> RunnerScreen(
+                                activeMode = state.activeMode,
+                                activeProvider = state.activeProvider,
+                                allModes = state.modes,
+                                allProviders = state.providers,
+                                messages = state.messages,
+                                inferenceState = state.inferenceState,
+                                onRunPrompt = viewModel::runPrompt,
+                                onStopStreaming = viewModel::stopStreaming,
+                                onNewSession = viewModel::startNewSession,
+                                onSwitchMode = viewModel::selectModeInRunner,
+                                onSwitchProvider = viewModel::activateProvider,
+                                onSwitchModelId = viewModel::switchActiveModelId,
+                                onOpenModelsTab = { viewModel.selectTab(OmniTab.MODELS) }
                             )
-                            ArgusTab.DECRYPTOR -> LogDecryptorScreen(
-                                state = decryptorState,
-                                availableKeys = keysState.keyPairs,
-                                onEncryptedTextChange = viewModel::updateDecryptEncryptedInput,
-                                onPrivateKeyChange = viewModel::updateDecryptPrivateKey,
-                                onSelectStoredKey = viewModel::selectStoredKeyForDecryption,
-                                onPassphraseChange = viewModel::updateDecryptPassphrase,
-                                onDecryptClick = viewModel::decryptLog,
-                                onClearOutputClick = viewModel::clearDecryptionOutput
+                            OmniTab.MODELS -> ProvidersScreen(
+                                providers = state.providers,
+                                activeProviderId = state.activeProviderId,
+                                testingProviderId = state.testingProviderId,
+                                testStatusMessage = state.testStatusMessage,
+                                onActivateProvider = viewModel::activateProvider,
+                                onUpdateProvider = viewModel::updateProviderConfig,
+                                onAddCustomProvider = viewModel::addCustomProvider,
+                                onDeleteCustomProvider = viewModel::deleteCustomProvider,
+                                onTestConnection = viewModel::testProviderConnection,
+                                onDismissTestStatus = viewModel::clearTestStatus
                             )
-                            ArgusTab.KEYS -> RsaKeysScreen(
-                                state = keysState,
-                                onGenerateKeyPair = viewModel::generateNewKeyPair,
-                                onActivateKeyPair = viewModel::setActiveKeyPair,
-                                onImportPublicKeyPem = viewModel::importPublicKeyPem,
-                                onDeleteKeyPair = viewModel::deleteKeyPair
+                            OmniTab.HISTORY -> HistoryScreen(
+                                history = state.history,
+                                onReopenSession = viewModel::reopenHistorySession,
+                                onDeleteSession = viewModel::deleteHistorySession
                             )
                         }
                     }

@@ -1,6 +1,6 @@
 {
-  "name": "Argus",
-  "description": "Encrypted session keystroke logger, Latin-Cyrillic layout mapper, RSA-4096 PEM key generator, and OAEP SHA3-512 log decryptor.",
+  "name": "OmniMode",
+  "description": "Multi-model AI workspace for running custom AI modes via built-in Gemini (Firebase AI Logic) or any custom AI API provider and model.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

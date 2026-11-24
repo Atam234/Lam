@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -54,14 +55,7 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE*,NOTICE*,versions/**,INDEX.LIST,DEPENDENCIES}"
-            pickFirsts += "META-INF/BCKEY.DSA"
-            pickFirsts += "META-INF/BCKEY.SF"
-        }
+        buildConfig = true
     }
 }
 
@@ -80,8 +74,13 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.bouncycastle.prov)
-    implementation(libs.bouncycastle.pkix)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.ai)
+    implementation(libs.firebase.appcheck.debug)
+    implementation(libs.firebase.appcheck.recaptcha)
+
+    implementation(libs.okhttp)
 
     testImplementation("junit:junit:4.13.2")
     debugImplementation(libs.androidx.ui.tooling)
